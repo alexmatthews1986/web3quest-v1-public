@@ -1,0 +1,1 @@
+// Placeholder TypeScript logic for MainScene.ts

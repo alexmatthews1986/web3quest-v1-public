@@ -1,0 +1,1 @@
+// Placeholder TypeScript logic for UserLoader.ts
