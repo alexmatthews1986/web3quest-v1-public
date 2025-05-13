@@ -1,6 +1,10 @@
+
 import Phaser from 'phaser';
 import XPOverlay from './XPOverlay';
 import DialogManager from './DialogManager';
+import InventoryUI from './InventoryUI';
+
+let inventoryUI: InventoryUI;
 
 export default class MainScene extends Phaser.Scene {
   private xpOverlay!: XPOverlay;
@@ -12,17 +16,35 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload(): void {
+    // Preload inventory icons and background
+    this.load.image('icon_xp', 'assets/icon_xp.png');
+    this.load.image('icon_scroll', 'assets/icon_scroll.png');
+    this.load.image('icon_key', 'assets/icon_key.png');
+    this.load.image('inventory_bg', 'assets/inventory_bg.png');
+
+    // Other UI assets
     this.load.image('scroll', 'scroll_popup.png');
   }
 
   create(): void {
-    this.currentXP = 0; // Later fetch real value
+    // Inventory UI
+    inventoryUI = new InventoryUI(this);
+
+    // Keybinding to toggle inventory
+    this.input.keyboard.on('keydown-I', () => {
+      inventoryUI.toggle();
+    });
+
+    // XP overlay logic
+    this.currentXP = 0; // NOTE: Later fetch real value
     this.xpOverlay = new XPOverlay(this);
     this.xpOverlay.create(this.currentXP);
 
+    // Dialog logic
     this.dialog = new DialogManager(this);
     this.dialog.show("Welcome to Web3Quest! Tap to continue.");
 
+    // Initial user click handling
     this.input.once('pointerdown', () => {
       this.dialog.hide();
       this.rewardXP(50);
@@ -31,6 +53,6 @@ export default class MainScene extends Phaser.Scene {
 
   rewardXP(amount: number): void {
     this.currentXP += amount;
-    this.xpOverlay.updateXP(this.currentXP);
+    this.xpOverlay.update(this.currentXP);
   }
 }
