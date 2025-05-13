@@ -1,8 +1,16 @@
 
-import { getFirestore, collection, addDoc, doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  doc,
+  setDoc,
+  serverTimestamp,
+  getDocs // ✅ New import
+} from 'firebase/firestore';
 
 export default class FirestoreManager {
-  private db = getFirestore()
+  private db = getFirestore();
 
   async logEvent(event: string, userId: string = 'guest') {
     try {
@@ -10,10 +18,10 @@ export default class FirestoreManager {
         event,
         userId,
         timestamp: serverTimestamp()
-      })
-      console.log(`[Firestore] Logged event: ${event}`)
+      });
+      console.log(`[Firestore] Logged event: ${event}`);
     } catch (err) {
-      console.error('[Firestore] Log error:', err)
+      console.error('[Firestore] Log error:', err);
     }
   }
 
@@ -22,23 +30,33 @@ export default class FirestoreManager {
       await setDoc(doc(this.db, 'users', userId), {
         xp,
         updated: serverTimestamp()
-      }, { merge: true })
-      console.log(`[Firestore] XP updated: ${xp}`)
+      }, { merge: true });
+      console.log(`[Firestore] XP updated: ${xp}`);
     } catch (err) {
-      console.error('[Firestore] XP update failed:', err)
+      console.error('[Firestore] XP update failed:', err);
     }
   }
 
   async setQuestStatus(userId: string, questId: string, status: 'accepted' | 'completed') {
     try {
-      const path = doc(this.db, 'users', userId, 'quests', questId)
+      const path = doc(this.db, 'users', userId, 'quests', questId);
       await setDoc(path, {
         status,
         timestamp: serverTimestamp()
-      }, { merge: true })
-      console.log(`[Firestore] Quest ${status}: ${questId}`)
+      }, { merge: true });
+      console.log(`[Firestore] Quest ${status}: ${questId}`);
     } catch (err) {
-      console.error('[Firestore] Quest update failed:', err)
+      console.error('[Firestore] Quest update failed:', err);
+    }
+  }
+
+  async getAllQuests(): Promise<any[]> {
+    try {
+      const querySnapshot = await getDocs(collection(this.db, 'quests'));
+      return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    } catch (err) {
+      console.error('[FirestoreManager] getAllQuests failed:', err);
+      return [];
     }
   }
 }
