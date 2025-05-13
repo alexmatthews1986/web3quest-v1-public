@@ -1,4 +1,3 @@
-// InventoryTypes.ts
 
 export interface InventoryItem {
   name: string;
