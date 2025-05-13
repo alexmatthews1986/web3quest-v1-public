@@ -3,6 +3,11 @@ import Phaser from 'phaser';
 import XPOverlay from './XPOverlay';
 import DialogManager from './DialogManager';
 import InventoryUI from './InventoryUI';
+import PlayerManager from './managers/PlayerManager';
+
+await PlayerManager.loadPlayerState(); // on login
+await PlayerManager.rewardXP(50);      // after quest
+await PlayerManager.rewardItem({ name: 'Golden Scroll', iconKey: 'icon_scroll' }); // drop
 
 let inventoryUI: InventoryUI;
 
