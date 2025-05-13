@@ -1,4 +1,3 @@
-// InventoryManager.ts
 
 import { InventoryItem } from '../types/InventoryTypes';
 
