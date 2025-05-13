@@ -1,0 +1,15 @@
+{
+  "users": {
+    "demoUser": {
+      "xp": 0,
+      "questsCompleted": []
+    }
+  },
+  "steps": {
+    "step1": {
+      "title": "Welcome Quest",
+      "description": "Begin your journey!",
+      "rewardXP": 100
+    }
+  }
+}
