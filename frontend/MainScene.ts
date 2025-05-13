@@ -3,23 +3,7 @@ import Phaser from 'phaser';
 import XPOverlay from './XPOverlay';
 import DialogManager from './DialogManager';
 import InventoryUI from './InventoryUI';
-import PlayerManager from './managers/PlayerManager';
 import QuestManager from './managers/QuestManager';
-
-const questManager = new QuestManager();
-
-await questManager.acceptQuest('scroll_hunter');     // When player taps “Accept”
-await questManager.completeQuest('scroll_hunter');   // When quest is fulfilled
-await PlayerManager.loadPlayerState(); // on login
-await PlayerManager.rewardXP(50);      // after quest
-await PlayerManager.rewardItem({ name: 'Golden Scroll', iconKey: 'icon_scroll' }); // drop
-
-// 🎯 Example test quest reward
-this.time.delayedCall(2000, async () => {
-  this.dialog.show("You've found a secret scroll!");
-  await PlayerManager.rewardItem({ name: 'Ancient Scroll', iconKey: 'icon_scroll' });
-  await PlayerManager.rewardXP(25);
-});
 
 let inventoryUI: InventoryUI;
 
@@ -33,39 +17,45 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // Preload inventory icons and background
+    // Load icon and UI assets
     this.load.image('icon_xp', 'assets/icon_xp.png');
-    this.load.image('icon_scroll', 'assets/icon_scroll.png');
-    this.load.image('icon_key', 'assets/icon_key.png');
-    this.load.image('inventory_bg', 'assets/inventory_bg.png');
-
-    // Other UI assets
     this.load.image('scroll', 'scroll_popup.png');
+    // NOTE: Add more assets here as needed
   }
 
   create(): void {
     // Inventory UI
     inventoryUI = new InventoryUI(this);
 
-    // Keybinding to toggle inventory
+    // Toggle inventory with "I" key
     this.input.keyboard.on('keydown-I', () => {
       inventoryUI.toggle();
     });
 
-    // XP overlay logic
+    // XP overlay setup
     this.currentXP = 0; // NOTE: Later fetch real value
     this.xpOverlay = new XPOverlay(this);
     this.xpOverlay.create(this.currentXP);
 
-    // Dialog logic
+    // Dialog intro
     this.dialog = new DialogManager(this);
     this.dialog.show("Welcome to Web3Quest! Tap to continue.");
 
-    // Initial user click handling
+    // On first click, hide dialog and give XP
     this.input.once('pointerdown', () => {
       this.dialog.hide();
       this.rewardXP(50);
     });
+
+    // 🧭 TEMP QUEST BOARD ZONE (click to open QuestBoardUI)
+    const questBoardZone = this.add.rectangle(600, 200, 100, 100, 0x00ffcc, 0.3)
+      .setInteractive()
+      .on('pointerdown', () => {
+        this.scene.launch('QuestBoardUI'); // Open quest UI
+        this.scene.pause(); // Pause game while quest UI is open
+      });
+
+    // TODO: Replace with NPC click or map zone trigger
   }
 
   rewardXP(amount: number): void {
@@ -73,3 +63,4 @@ export default class MainScene extends Phaser.Scene {
     this.xpOverlay.update(this.currentXP);
   }
 }
+
