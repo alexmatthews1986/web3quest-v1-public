@@ -9,6 +9,13 @@ await PlayerManager.loadPlayerState(); // on login
 await PlayerManager.rewardXP(50);      // after quest
 await PlayerManager.rewardItem({ name: 'Golden Scroll', iconKey: 'icon_scroll' }); // drop
 
+// 🎯 Example test quest reward
+this.time.delayedCall(2000, async () => {
+  this.dialog.show("You've found a secret scroll!");
+  await PlayerManager.rewardItem({ name: 'Ancient Scroll', iconKey: 'icon_scroll' });
+  await PlayerManager.rewardXP(25);
+});
+
 let inventoryUI: InventoryUI;
 
 export default class MainScene extends Phaser.Scene {
