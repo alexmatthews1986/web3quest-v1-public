@@ -1,4 +1,3 @@
-// InventoryUI.ts
 
 import Phaser from 'phaser';
 import { InventoryItem } from '../types/InventoryTypes';
