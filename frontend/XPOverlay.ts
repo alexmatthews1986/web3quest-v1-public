@@ -27,7 +27,6 @@ export default class XPOverlay {
 }
 
 
-// RewardManager.ts
 import { getFirestore, doc, updateDoc, increment } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
@@ -45,7 +44,6 @@ export default class RewardManager {
 }
 
 
-// MainScene.ts
 import Phaser from 'phaser';
 import XPOverlay from './XPOverlay';
 import DialogManager from './DialogManager';
