@@ -1,1 +1,0 @@
-// Placeholder TypeScript logic for TravelMapUI.ts
