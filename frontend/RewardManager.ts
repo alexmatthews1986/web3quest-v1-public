@@ -1,3 +1,4 @@
+
 import { getFirestore, doc, updateDoc, increment } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import firebaseConfig from '../firebaseConfig';
