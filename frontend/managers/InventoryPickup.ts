@@ -1,3 +1,4 @@
+
 import InventoryManager from './InventoryManager'
 
 export default class InventoryPickup {
