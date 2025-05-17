@@ -1,12 +1,16 @@
-export type DialogueNode = {
+export interface DialogueNode {
   id: string;
-  message: string;
+  text: string;
   speaker?: string;
-  portraitKey?: string;
-  nextId?: string;
-  style?: 'npc' | 'system' | 'quest';
-  choices?: {
-    text: string;
-    nextId: string;
-  }[];
-};
+  speakerPortrait?: string; // FUTURE
+  style?: 'npc' | 'system' | 'quest'; // FUTURE
+  typingSpeed?: number; // FUTURE
+  choices?: DialogueChoice[];
+  next?: string;
+}
+
+export interface DialogueChoice {
+  text: string;
+  nextId: string;
+  action?: () => void;
+}
