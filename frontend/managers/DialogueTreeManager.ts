@@ -26,9 +26,6 @@ export default class DialogueTreeManager {
     this.dialogManager.hideDialogue();
     this.clearChoices();
 
-    // FUTURE: Apply theme styling logic
-    // this.dialogManager.setStyle(node.style ?? 'npc');
-
     if (node.speaker) this.dialogManager.showSpeaker(node.speaker);
     if (node.speakerPortrait) this.dialogManager.showPortrait(node.speakerPortrait);
 
@@ -69,4 +66,3 @@ export default class DialogueTreeManager {
     this.choiceTexts = [];
   }
 }
-
