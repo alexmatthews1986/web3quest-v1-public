@@ -1,46 +1,80 @@
-
-import Phaser from 'phaser'
-
 /**
- * Handles displaying and hiding in-game dialogue boxes.
- * Can be extended for NPC conversations, choices, or animated text.
+ * DialogueTreeManager
+ * Handles branching NPC conversations, player choices, and dialogue sequences.
+ * Future expansions: emotional tone, quest links, NPC memory.
  */
-export default class DialogManager {
+
+export interface DialogueNode {
+  id: string;
+  text: string;
+  speaker?: string;
+  choices?: DialogueChoice[];
+  next?: string; // fallback continuation
+}
+
+export interface DialogueChoice {
+  text: string;
+  nextId: string;
+  action?: () => void; // Optional trigger (e.g., accept quest)
+}
+
+export default class DialogueTreeManager {
   private scene: Phaser.Scene;
-  private dialogBox!: Phaser.GameObjects.Rectangle;
-  private dialogText!: Phaser.GameObjects.Text;
+  private dialogueData: Record<string, DialogueNode>;
+  private currentNodeId: string | null = null;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, dialogueData: Record<string, DialogueNode>) {
     this.scene = scene;
+    this.dialogueData = dialogueData;
   }
 
   /**
-   * Shows a dialogue box with the provided message.
-   * @param message - The string to display (can later support markup or multiline).
+   * Start the dialogue tree from a specific node.
    */
-  showDialogue(message: string): void {
-    // Remove any existing dialog elements before showing a new one
-    if (this.dialogBox) this.dialogBox.destroy();
-    if (this.dialogText) this.dialogText.destroy();
-
-    // Background box (semi-transparent black)
-    this.dialogBox = this.scene.add.rectangle(400, 500, 700, 100, 0x000000, 0.8).setOrigin(0.5);
-
-    // Text message, styled and wrapped
-    this.dialogText = this.scene.add.text(120, 470, message, {
-      fontSize: '18px',
-      color: '#ffffff',
-      wordWrap: { width: 560 }, // Prevents overflow
-    });
-
-    // FUTURE: Add speaker name, animated text, typewriter effect, branching logic, etc.
+  start(nodeId: string): void {
+    this.currentNodeId = nodeId;
+    this.displayCurrentNode();
   }
 
   /**
-   * Hides the currently visible dialogue box and text.
+   * Render current dialogue node and choices.
    */
-  hideDialogue(): void {
-    this.dialogBox?.destroy();
-    this.dialogText?.destroy();
+  private displayCurrentNode(): void {
+    if (!this.currentNodeId) return;
+
+    const node = this.dialogueData[this.currentNodeId];
+    if (!node) return;
+
+    // Show main dialogue text (use your DialogManager)
+    const speaker = node.speaker ? `${node.speaker}: ` : '';
+    const fullMessage = `${speaker}${node.text}`;
+
+    const dialogManager = new DialogManager(this.scene);
+    dialogManager.showDialogue(fullMessage);
+
+    // TODO: Display choices if any
+    if (node.choices && node.choices.length > 0) {
+      node.choices.forEach((choice, index) => {
+        const y = 500 + index * 30;
+        const choiceText = this.scene.add.text(120, y, choice.text, {
+          fontSize: '16px',
+          color: '#00ffff',
+        }).setInteractive();
+
+        choiceText.on('pointerdown', () => {
+          if (choice.action) choice.action();
+          this.currentNodeId = choice.nextId;
+          dialogManager.hideDialogue();
+          this.displayCurrentNode();
+        });
+      });
+    } else if (node.next) {
+      // No choices, auto-continue
+      this.currentNodeId = node.next;
+      this.scene.input.once('pointerdown', () => {
+        dialogManager.hideDialogue();
+        this.displayCurrentNode();
+      });
+    }
   }
 }
