@@ -6,6 +6,7 @@ export default class DialogueTreeManager {
   private dialogManager: DialogManager;
   private dialogueData: Record<string, DialogueNode>;
   private currentNodeId: string = '';
+  private choiceTexts: Phaser.GameObjects.Text[] = [];
 
   constructor(scene: Phaser.Scene, dialogueData: Record<string, DialogueNode>) {
     this.scene = scene;
@@ -22,43 +23,50 @@ export default class DialogueTreeManager {
     const node = this.dialogueData[this.currentNodeId];
     if (!node) return;
 
-    // FUTURE: Apply theme (e.g. npc / quest / system)
+    this.dialogManager.hideDialogue();
+    this.clearChoices();
+
+    // FUTURE: Apply theme styling logic
     // this.dialogManager.setStyle(node.style ?? 'npc');
 
-    // FUTURE: Show NPC portrait
-    // if (node.speakerPortrait) this.dialogManager.showPortrait(node.speakerPortrait);
+    if (node.speaker) this.dialogManager.showSpeaker(node.speaker);
+    if (node.speakerPortrait) this.dialogManager.showPortrait(node.speakerPortrait);
 
-    // FUTURE: Typewriter animation
     if (node.typingSpeed) {
-      this.typeText(`${node.speaker ?? ''}: ${node.text}`, node.typingSpeed);
+      this.dialogManager.typeText(node.text, node.typingSpeed);
     } else {
-      this.dialogManager.showDialogue(`${node.speaker ?? ''}: ${node.text}`);
+      this.dialogManager.showDialogue(node.text);
     }
 
-    // Handle choices
     if (node.choices?.length) {
       node.choices.forEach((choice, i) => {
-        this.scene.add.text(120, 520 + i * 30, choice.text, {
+        const textObj = this.scene.add.text(120, 520 + i * 30, `> ${choice.text}`, {
           fontSize: '16px',
           color: '#00ffff',
-          backgroundColor: '#222222',
-          padding: { x: 8, y: 4 }
-        })
-        .setInteractive()
-        .on('pointerdown', () => {
+          backgroundColor: '#111111',
+          padding: { left: 10, right: 10, top: 4, bottom: 4 }
+        }).setInteractive();
+
+        textObj.on('pointerdown', () => {
+          this.clearChoices();
           if (choice.action) choice.action();
           this.currentNodeId = choice.nextId;
           this.displayCurrentNode();
         });
+
+        this.choiceTexts.push(textObj);
       });
     } else if (node.next) {
-      this.currentNodeId = node.next;
-      this.scene.time.delayedCall(1200, () => this.displayCurrentNode());
+      this.scene.input.once('pointerdown', () => {
+        this.currentNodeId = node.next!;
+        this.displayCurrentNode();
+      });
     }
   }
 
-  private typeText(text: string, speed: number): void {
-    // TODO: Reveal text character by character using timers/tweens
-    this.dialogManager.showDialogue(text); // TEMP fallback
+  private clearChoices(): void {
+    this.choiceTexts.forEach(t => t.destroy());
+    this.choiceTexts = [];
   }
 }
+
