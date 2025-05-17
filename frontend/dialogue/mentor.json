@@ -1,0 +1,28 @@
+{
+  "intro": {
+    "id": "intro",
+    "speaker": "Mentor",
+    "text": "Welcome, explorer. Ready to choose your path?",
+    "speakerPortrait": "mentor_portrait",
+    "style": "npc",
+    "typingSpeed": 40,
+    "choices": [
+      { "text": "Begin Quest", "nextId": "start_quest" },
+      { "text": "Maybe later", "nextId": "goodbye" }
+    ]
+  },
+  "start_quest": {
+    "id": "start_quest",
+    "text": "A wise choice. The Scroll awaits.",
+    "next": "end"
+  },
+  "goodbye": {
+    "id": "goodbye",
+    "text": "Come back when you are ready.",
+    "next": "end"
+  },
+  "end": {
+    "id": "end",
+    "text": "Farewell for now."
+  }
+}
