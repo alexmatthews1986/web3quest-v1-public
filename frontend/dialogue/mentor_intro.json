@@ -1,0 +1,23 @@
+[
+  {
+    "id": "intro_1",
+    "speaker": "Mentor",
+    "message": "Welcome to your quest, traveler. Are you ready to begin?",
+    "choices": [
+      { "text": "Yes, let's go!", "nextId": "intro_2" },
+      { "text": "Not yet.", "nextId": "exit_1" }
+    ],
+    "portraitKey": "mentor_portrait",
+    "style": "npc"
+  },
+  {
+    "id": "intro_2",
+    "message": "Your journey begins with the XP scroll. Seek it out.",
+    "nextId": "end"
+  },
+  {
+    "id": "exit_1",
+    "message": "Very well. Return when you are ready.",
+    "style": "system"
+  }
+]
