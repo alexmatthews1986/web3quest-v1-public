@@ -45,3 +45,8 @@ Founded by @alexmatthews1986
 
 ---
 
+## Setup & Build Instructions
+
+1. **Environment Variables**  
+Create a `.env` file in the root with the following keys (replace with your Firebase project details):
+
