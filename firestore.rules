@@ -1,11 +1,15 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Users can read and write their own data only
     match /users/{userId} {
-      allow read, write: if true;
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
+
+    // Steps are publicly readable but not writable
     match /steps/{stepId} {
       allow read: if true;
+      allow write: if false;
     }
   }
 }
