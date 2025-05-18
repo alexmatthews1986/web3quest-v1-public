@@ -8,6 +8,17 @@
 import DialogManager from './DialogManager';
 import Phaser from 'phaser';
 
+export interface DialogueChoice {
+  /** Text for the choice button */
+  text: string;
+
+  /** The id of the next node this choice leads to */
+  nextId: string;
+
+  /** Optional callback when this choice is selected */
+  action?: () => void;
+}
+
 export interface DialogueNode {
   /** Unique ID for this dialogue node */
   id: string;
@@ -23,17 +34,6 @@ export interface DialogueNode {
 
   /** ID of the next dialogue node if no choices */
   next?: string;
-}
-
-export interface DialogueChoice {
-  /** Text for the choice button */
-  text: string;
-
-  /** The id of the next node this choice leads to */
-  nextId: string;
-
-  /** Optional callback when this choice is selected */
-  action?: () => void;
 }
 
 export default class DialogueTreeManager {
